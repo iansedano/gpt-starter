@@ -1,31 +1,25 @@
-from secret import key
-import openai
+import pathlib
 
-openai.api_key = key
+from openai import OpenAI
 
-def chat():
-    """Creates a conversation with openai api."""
+client = OpenAI()
+
+def system_msg(message):
+    return {
+        "role": "system",
+        "content": message,
+    }
+
+def user_msg(message):
+    return {
+        "role": "user",
+        "content": message,
+    }
+
+def completion(messages):
+    return client.chat.completions.create(
+        messages=messages,
+        model="gpt-3.5-turbo",
+    ).choices[0].message.content
     
-    chatbot_conversation = []
-
-    while True:
-        user_input = input ("User: ")
-        if user_input.lower() == "exit":
-            break
-
-        chatbot_conversation.append({"role": "user", "content": user_input})
-
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=chatbot_conversation
-        )
-
-        chatbot_repsonse = response["choices"][0]["message"]["content"]
-        print(f"Chatbot: {chatbot_repsonse}")
-        chatbot_conversation.append({"role": "assistant", "content": chatbot_repsonse})
-
-if __name__ == "__main__":
-    print("Welcome! Let's start a new chat...(Type 'exit' to quit)")
-    chat()
-
 
